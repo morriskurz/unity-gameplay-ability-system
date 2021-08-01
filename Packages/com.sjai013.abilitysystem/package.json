@@ -1,7 +1,7 @@
 {
   "name": "com.sjai013.abilitysystem",
   "displayName": "Gameplay Ability System",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "unity": "2020.1",
   "description": "A unified framework for developing ability-based games",
   "dependencies": {},
