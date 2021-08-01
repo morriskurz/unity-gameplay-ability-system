@@ -38,7 +38,7 @@ namespace AbilitySystem
         /// Applies the gameplay effect spec to self
         /// </summary>
         /// <param name="geSpec">GameplayEffectSpec to apply</param>
-        public bool ApplyGameplayEffectSpecToSelf(GameplayEffectSpec geSpec)
+        public virtual bool ApplyGameplayEffectSpecToSelf(GameplayEffectSpec geSpec)
         {
             if (geSpec == null) return true;
             bool tagRequirementsOK = CheckTagRequirementsMet(geSpec);
@@ -100,7 +100,7 @@ namespace AbilitySystem
             return true;
         }
 
-        void ApplyInstantGameplayEffect(GameplayEffectSpec spec)
+        protected virtual void ApplyInstantGameplayEffect(GameplayEffectSpec spec)
         {
             for (var i = 0; i < spec.GameplayEffect.gameplayEffect.Modifiers.Length; i++)
             {
@@ -124,7 +124,7 @@ namespace AbilitySystem
                 this.AttributeSystem.SetAttributeBaseValue(attribute, attributeValue.BaseValue);
             }
         }
-        void ApplyDurationalGameplayEffect(GameplayEffectSpec spec)
+        protected  virtual void ApplyDurationalGameplayEffect(GameplayEffectSpec spec)
         {
             var modifiersToApply = new List<GameplayEffectContainer.ModifierContainer>();
             for (var i = 0; i < spec.GameplayEffect.gameplayEffect.Modifiers.Length; i++)
@@ -186,7 +186,7 @@ namespace AbilitySystem
             }
         }
 
-        void CleanGameplayEffects()
+        protected virtual void CleanGameplayEffects()
         {
             this.AppliedGameplayEffects.RemoveAll(x => x.spec.GameplayEffect.gameplayEffect.DurationPolicy == EDurationPolicy.HasDuration && x.spec.DurationRemaining <= 0);
         }
