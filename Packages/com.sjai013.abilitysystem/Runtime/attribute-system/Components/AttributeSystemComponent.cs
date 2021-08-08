@@ -11,19 +11,19 @@ namespace AttributeSystem.Components
     public class AttributeSystemComponent : MonoBehaviour
     {
         [SerializeField]
-        private AbstractAttributeEventHandler[] AttributeSystemEvents;
+        protected AbstractAttributeEventHandler[] AttributeSystemEvents;
 
         /// <summary>
         /// Attribute sets assigned to the game character
         /// </summary>
         [SerializeField]
-        private List<AttributeScriptableObject> Attributes;
+        protected List<AttributeScriptableObject> Attributes;
 
         [SerializeField]
-        private List<AttributeValue> AttributeValues;
+        protected List<AttributeValue> AttributeValues;
 
-        private bool mAttributeDictStale;
-        public Dictionary<AttributeScriptableObject, int> mAttributeIndexCache { get; private set; } = new Dictionary<AttributeScriptableObject, int>();
+        protected bool mAttributeDictStale;
+        public Dictionary<AttributeScriptableObject, int> mAttributeIndexCache { get; protected set; } = new Dictionary<AttributeScriptableObject, int>();
 
         /// <summary>
         /// Marks attribute cache dirty, so it can be recreated next time it is required
@@ -40,7 +40,7 @@ namespace AttributeSystem.Components
         /// <param name="attribute">Attribute to get value for</param>
         /// <param name="value">Returned attribute</param>
         /// <returns>True if attribute was found, false otherwise.</returns>
-        public bool GetAttributeValue(AttributeScriptableObject attribute, out AttributeValue value)
+        public virtual bool GetAttributeValue(AttributeScriptableObject attribute, out AttributeValue value)
         {
             // If dictionary is stale, rebuild it
             var attributeCache = GetAttributeCache();
@@ -60,7 +60,7 @@ namespace AttributeSystem.Components
             return false;
         }
 
-        public void SetAttributeBaseValue(AttributeScriptableObject attribute, float value)
+        public virtual void SetAttributeBaseValue(AttributeScriptableObject attribute, float value)
         {
             // If dictionary is stale, rebuild it
             var attributeCache = GetAttributeCache();
@@ -78,7 +78,7 @@ namespace AttributeSystem.Components
         /// <param name="modifierType">How to modify the attribute</param>
         /// <param name="value">Copy of newly modified attribute</param>
         /// <returns>True, if attribute was found.</returns>
-        public bool UpdateAttributeModifiers(AttributeScriptableObject attribute, AttributeModifier modifier, out AttributeValue value)
+        public virtual bool UpdateAttributeModifiers(AttributeScriptableObject attribute, AttributeModifier modifier, out AttributeValue value)
         {
             // If dictionary is stale, rebuild it
             var attributeCache = GetAttributeCache();
@@ -105,7 +105,7 @@ namespace AttributeSystem.Components
         /// Add attributes to this attribute system.  Duplicates are ignored.
         /// </summary>
         /// <param name="attributes">Attributes to add</param>
-        public void AddAttributes(params AttributeScriptableObject[] attributes)
+        public virtual void AddAttributes(params AttributeScriptableObject[] attributes)
         {
             // If this attribute already exists, we don't need to add it.  For that, we need to make sure the cache is up to date.
             var attributeCache = GetAttributeCache();
@@ -126,7 +126,7 @@ namespace AttributeSystem.Components
         /// Remove attributes from this attribute system.
         /// </summary>
         /// <param name="attributes">Attributes to remove</param>
-        public void RemoveAttributes(params AttributeScriptableObject[] attributes)
+        public virtual void RemoveAttributes(params AttributeScriptableObject[] attributes)
         {
             for (var i = 0; i < attributes.Length; i++)
             {
@@ -137,7 +137,7 @@ namespace AttributeSystem.Components
             GetAttributeCache();
         }
 
-        public void ResetAll()
+        public virtual void ResetAll()
         {
             for (var i = 0; i < this.AttributeValues.Count; i++)
             {
@@ -147,7 +147,7 @@ namespace AttributeSystem.Components
             }
         }
 
-        public void ResetAttributeModifiers()
+        public virtual void ResetAttributeModifiers()
         {
             for (var i = 0; i < this.AttributeValues.Count; i++)
             {
@@ -157,7 +157,7 @@ namespace AttributeSystem.Components
             }
         }
 
-        private void InitialiseAttributeValues()
+        protected virtual void InitialiseAttributeValues()
         {
             this.AttributeValues = new List<AttributeValue>();
             for (var i = 0; i < Attributes.Count; i++)
@@ -176,8 +176,8 @@ namespace AttributeSystem.Components
             }
         }
 
-        private List<AttributeValue> prevAttributeValues = new List<AttributeValue>();
-        public void UpdateAttributeCurrentValues()
+        protected List<AttributeValue> prevAttributeValues = new List<AttributeValue>();
+        public virtual void UpdateAttributeCurrentValues()
         {
             prevAttributeValues.Clear();
             for (var i = 0; i < this.AttributeValues.Count; i++)
@@ -193,7 +193,7 @@ namespace AttributeSystem.Components
             }
         }
 
-        private Dictionary<AttributeScriptableObject, int> GetAttributeCache()
+        protected  virtual Dictionary<AttributeScriptableObject, int> GetAttributeCache()
         {
             if (mAttributeDictStale)
             {
@@ -207,14 +207,14 @@ namespace AttributeSystem.Components
             return mAttributeIndexCache;
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             InitialiseAttributeValues();
             this.MarkAttributesDirty();
             GetAttributeCache();
         }
 
-        private void LateUpdate()
+        protected virtual void LateUpdate()
         {
             UpdateAttributeCurrentValues();
         }

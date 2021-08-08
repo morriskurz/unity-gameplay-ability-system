@@ -17,12 +17,12 @@ namespace AbilitySystem
         public List<AbstractAbilitySpec> GrantedAbilities = new List<AbstractAbilitySpec>();
         public float Level;
 
-        public void GrantAbility(AbstractAbilitySpec spec)
+        public virtual void GrantAbility(AbstractAbilitySpec spec)
         {
             this.GrantedAbilities.Add(spec);
         }
 
-        public void RemoveAbilitiesWithTag(GameplayTagScriptableObject tag)
+        public virtual void RemoveAbilitiesWithTag(GameplayTagScriptableObject tag)
         {
             for (var i = GrantedAbilities.Count - 1; i >= 0; i--)
             {
@@ -59,7 +59,7 @@ namespace AbilitySystem
 
             return true;
         }
-        public GameplayEffectSpec MakeOutgoingSpec(GameplayEffectScriptableObject GameplayEffect, float? level = 1f)
+        public virtual GameplayEffectSpec MakeOutgoingSpec(GameplayEffectScriptableObject GameplayEffect, float? level = 1f)
         {
             level = level ?? this.Level;
             return GameplayEffectSpec.CreateNew(
@@ -68,7 +68,7 @@ namespace AbilitySystem
                 Level: level.GetValueOrDefault(1));
         }
 
-        bool CheckTagRequirementsMet(GameplayEffectSpec geSpec)
+        protected virtual bool CheckTagRequirementsMet(GameplayEffectSpec geSpec)
         {
             /// Build temporary list of all gametags currently applied
             var appliedTags = new List<GameplayTagScriptableObject>();
@@ -149,7 +149,7 @@ namespace AbilitySystem
             AppliedGameplayEffects.Add(new GameplayEffectContainer() { spec = spec, modifiers = modifiersToApply.ToArray() });
         }
 
-        void UpdateAttributeSystem()
+        protected virtual void UpdateAttributeSystem()
         {
             // Set Current Value to Base Value (default position if there are no GE affecting that atribute)
 
@@ -165,7 +165,7 @@ namespace AbilitySystem
             }
         }
 
-        void TickGameplayEffects()
+        protected virtual void TickGameplayEffects()
         {
             for (var i = 0; i < this.AppliedGameplayEffects.Count; i++)
             {
@@ -191,7 +191,7 @@ namespace AbilitySystem
             this.AppliedGameplayEffects.RemoveAll(x => x.spec.GameplayEffect.gameplayEffect.DurationPolicy == EDurationPolicy.HasDuration && x.spec.DurationRemaining <= 0);
         }
 
-        void Update()
+        protected virtual void Update()
         {
             // Reset all attributes to 0
             this.AttributeSystem.ResetAttributeModifiers();
