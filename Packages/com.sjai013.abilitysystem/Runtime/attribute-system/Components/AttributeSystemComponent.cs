@@ -26,6 +26,14 @@ namespace AttributeSystem.Components
         public Dictionary<AttributeScriptableObject, int> mAttributeIndexCache { get; protected set; } = new Dictionary<AttributeScriptableObject, int>();
 
         /// <summary>
+        /// Returns all attributes currently on this character.
+        /// </summary>
+        public List<AttributeScriptableObject> GetAttributes()
+        {
+            return new List<AttributeScriptableObject>(mAttributeIndexCache.Keys);
+        }
+        
+        /// <summary>
         /// Marks attribute cache dirty, so it can be recreated next time it is required
         /// </summary>
         public void MarkAttributesDirty()
@@ -219,7 +227,7 @@ namespace AttributeSystem.Components
             UpdateAttributeCurrentValues();
         }
 
-
+        
     }
 
 }
